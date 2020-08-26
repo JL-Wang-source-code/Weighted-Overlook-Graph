@@ -1,0 +1,22 @@
+Z = 'F:\data\A\';  %You can get the dataset A B C D E from: 
+%http://epileptologie-bonn.de/cms/front_content.php?idcat=193&lang=3&changelang=3
+G = dir([Z '*.txt']);
+EEG_signals = [];
+for j = 1:length(G)
+one_txt = textread([Z G(j).name]);
+one_vector = one_txt';
+one_vector = one_vector(1,1:4096);
+one_sample = reshape(one_vector,256,[]);
+one_sample = one_sample';
+EEG_signals = [EEG_signals;one_sample];
+end
+%EEG_signals consists of n segments where each segment contains 256 sampling points.
+%Label is a one-dimensional array of length n. Positive is 1 and negative is 0.
+[n,m,~] = size(EEG_signals);
+Label = zeros(1,n); %when you construct E use Lable = ones(1,n);
+for k = 1:n
+Adjmatrix = overlook(EEG_signals(k,:));
+L = Label(k);
+str=[num2str(L),'_',num2str(k),'.png'];
+imwrite(Adjmatrix,strcat('F:\data\complex_network_A\',str),'png');
+end
